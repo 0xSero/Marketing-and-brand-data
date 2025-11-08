@@ -1,0 +1,70 @@
+{
+  "description": "Marketing Knowledge Database - Data Sources Configuration",
+  "version": "1.0",
+  "target_size_gb": 2.0,
+  "rate_limit_seconds": 2.0,
+
+  "scrapers": {
+    "blogs": {
+      "enabled": true,
+      "sources": [
+        "hubspot",
+        "neilpatel",
+        "moz",
+        "contentmarketinginstitute",
+        "marketingprofs",
+        "copyblogger",
+        "searchengineland"
+      ],
+      "max_articles_per_source": 500,
+      "max_pages_per_source": 50
+    },
+
+    "case_studies": {
+      "enabled": true,
+      "sources": [
+        "thinkwithgoogle",
+        "hubspot_casestudies",
+        "marketo_casestudies"
+      ],
+      "max_items_per_source": 300,
+      "max_pages_per_source": 30
+    },
+
+    "news": {
+      "enabled": true,
+      "sources": [
+        "adage",
+        "marketingweek",
+        "thedrum",
+        "adweek",
+        "campaignlive"
+      ],
+      "max_articles_per_source": 300,
+      "max_pages_per_source": 30
+    }
+  },
+
+  "storage": {
+    "raw_data_dir": "data/raw",
+    "processed_data_dir": "data/processed",
+    "index_dir": "data/index",
+    "database_name": "knowledge_base.db"
+  },
+
+  "processing": {
+    "save_raw_html": false,
+    "extract_images": true,
+    "generate_keywords": true,
+    "min_content_length": 100,
+    "max_content_length": 1000000
+  },
+
+  "ethical_scraping": {
+    "respect_robots_txt": true,
+    "rate_limit_seconds": 2.0,
+    "max_retries": 3,
+    "timeout_seconds": 30,
+    "user_agent": "Mozilla/5.0 (compatible; MarketingKnowledgeBot/1.0)"
+  }
+}
