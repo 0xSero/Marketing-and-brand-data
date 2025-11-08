@@ -27,7 +27,8 @@ class GenericBlogScraper(BaseScraper):
         base_url: str,
         config: Dict[str, any],
         max_pages: int = 100,
-        max_articles: int = 1000
+        max_articles: int = 1000,
+        respect_robots_txt: bool = False
     ):
         """
         Initialize generic blog scraper.
@@ -38,8 +39,9 @@ class GenericBlogScraper(BaseScraper):
             config: Configuration dict with CSS selectors
             max_pages: Maximum pagination pages to scrape
             max_articles: Maximum articles to scrape
+            respect_robots_txt: Whether to respect robots.txt (default: False for research)
         """
-        super().__init__(name, base_url)
+        super().__init__(name, base_url, respect_robots_txt=respect_robots_txt)
 
         self.config = config
         self.max_pages = max_pages

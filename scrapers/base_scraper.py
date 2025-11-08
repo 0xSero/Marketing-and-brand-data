@@ -27,7 +27,8 @@ class BaseScraper:
         output_dir: str = "data/raw",
         rate_limit: float = 2.0,
         max_retries: int = 3,
-        timeout: int = 30
+        timeout: int = 30,
+        respect_robots_txt: bool = True
     ):
         """
         Initialize the base scraper.
@@ -39,6 +40,7 @@ class BaseScraper:
             rate_limit: Delay between requests in seconds
             max_retries: Maximum number of retry attempts
             timeout: Request timeout in seconds
+            respect_robots_txt: Whether to respect robots.txt (default: True)
         """
         self.name = name
         self.base_url = base_url
@@ -47,6 +49,7 @@ class BaseScraper:
         self.rate_limit = rate_limit
         self.max_retries = max_retries
         self.timeout = timeout
+        self.respect_robots_txt = respect_robots_txt
 
         # Setup logging
         self.logger = logging.getLogger(f"scraper.{name}")
@@ -68,13 +71,17 @@ class BaseScraper:
         })
 
         # Robots.txt parser
-        self.robot_parser = RobotFileParser()
-        self.robot_parser.set_url(urljoin(base_url, '/robots.txt'))
-        try:
-            self.robot_parser.read()
-            self.logger.info(f"Loaded robots.txt from {base_url}")
-        except Exception as e:
-            self.logger.warning(f"Could not load robots.txt: {e}")
+        self.robot_parser = None
+        if self.respect_robots_txt:
+            self.robot_parser = RobotFileParser()
+            self.robot_parser.set_url(urljoin(base_url, '/robots.txt'))
+            try:
+                self.robot_parser.read()
+                self.logger.info(f"Loaded robots.txt from {base_url}")
+            except Exception as e:
+                self.logger.warning(f"Could not load robots.txt: {e}")
+        else:
+            self.logger.info(f"Robots.txt checking disabled for {name} (non-commercial research use)")
 
         # Statistics
         self.stats = {
@@ -87,6 +94,8 @@ class BaseScraper:
 
     def can_fetch(self, url: str) -> bool:
         """Check if URL can be fetched according to robots.txt"""
+        if not self.respect_robots_txt:
+            return True  # Bypass robots.txt checking
         try:
             return self.robot_parser.can_fetch("*", url)
         except:
